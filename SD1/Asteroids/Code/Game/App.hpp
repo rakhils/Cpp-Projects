@@ -14,7 +14,7 @@ class App
 public:
 	// VARIABLES
 
-	bool  m_isQuitTriggered = false;
+	
 
 	// FUNCTIONS
 	App::App();

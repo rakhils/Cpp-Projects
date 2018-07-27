@@ -251,7 +251,7 @@ void InputSystem::OnRButtonReleased()
 //////////////////////////////////////////////////////////////
 void InputSystem::UpdateMouseXYPosition(int x, int y)
 {
-	m_mouseStates.m_mouseXPosition = RangeMapInt(x,0,1728,0,980);
+	m_mouseStates.m_mouseXPosition = static_cast<int>(RangeMapInt((x),0,1728,0,980));
 	m_mouseStates.m_mouseYPosition = 972 - y;
 }
 
@@ -294,8 +294,8 @@ int InputSystem::GetMouseYPosition()
 //////////////////////////////////////////////////////////////
 Vector2 InputSystem::getRangeMappedMousePosition()
 {
-	int width  = 1728;
-	int height = 972;
+	/*int width  = 1728;
+	int height = 972;*/
 	return Vector2::ZERO;
 }
 

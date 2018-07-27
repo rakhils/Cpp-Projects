@@ -190,14 +190,15 @@ void Renderer::DrawLines(Vector2 *pointArray,int length)
 
 void Renderer::DrawLines(std::vector<Vector2>& points, Rgba rgba,bool skip)
 {
-	Vertex_3DPCU *lineVertex = new Vertex_3DPCU[points.size()];
+	Vertex_3DPCU lineVertex[1000];
 	for(int index = 0;index < points.size();index++)
 	{
 		(lineVertex + index)->setPoint(points.at(index));
 		(lineVertex + index)->setRGBA(rgba);
 		//(lineVertex + index + 1)->setPoint(points.at(index + 1));
 	}
-	DrawMeshImmediate(lineVertex, points.size(), PRIMITIVE_LINES);
+	DrawMeshImmediate(lineVertex, static_cast<int>(points.size()), PRIMITIVE_LINES);
+	//delete lineVertex;
 }
 
 void Renderer::DrawLine(Vector2 *point1,Vector2 *point2)
@@ -515,7 +516,7 @@ void Renderer::DrawTextOnPoint(char value[],int start,int length, Vector2 positi
 
 void Renderer::DrawTextOnPoint(char value[],int start,int length, Vector2 pos,int height)
 {
-	DrawTextOnPoint(value,start,length,pos,height,Rgba::WHITE);
+	DrawTextOnPoint(value,start,length,pos,static_cast<float>(height),Rgba::WHITE);
 }
 
 void Renderer::DrawTextOnPoint(std::string str, int start, int length, Vector2 pos, float height, Rgba rgba)
@@ -537,7 +538,7 @@ void Renderer::DrawInt(int value, Vector2 pos,int height)
 	}
 	strValue[j] = '\0';
 	std::reverse(strValue.begin(),strValue.end());
-	DrawTextOnPoint(strValue,0,static_cast<int>(strValue.length()),pos,height,Rgba::WHITE);
+	DrawTextOnPoint(strValue,0,static_cast<int>(strValue.length()),pos,static_cast<float>(height),Rgba::WHITE);
 }
 
 void Renderer::DrawTextInBox2D(AABB2 aabb2, std::string text, float aspectRatio, float height, Vector2 alignment, TextDrawMode drawMode)
@@ -726,7 +727,7 @@ void Renderer::DrawTextInBox2D(AABB2 aabb2, std::string text, float aspectRatio,
 
 void Renderer::DrawText2D(const Vector2& drawMins, const std::string& asciiText, float cellHeight, Rgba tint, float aspectScale /*= 1.f*/, const BitmapFont* font /*= nullptr */)
 {
-	DrawTextOnPoint(asciiText,(int)0,static_cast<int>(asciiText.length()),drawMins,static_cast<int>(cellHeight),Rgba::WHITE);
+	DrawTextOnPoint(asciiText,(int)0,static_cast<int>(asciiText.length()),drawMins,static_cast<float>(cellHeight),Rgba::WHITE);
 }
 
 int g_openGlPrimitiveTypes[ NUM_PRIMITIVE_TYPES ] =

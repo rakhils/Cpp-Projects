@@ -471,15 +471,15 @@ float RangeMapInt(int value, int OriginalLowerBound, int OriginalUpperBound, int
 {
 	if (OriginalLowerBound == OriginalUpperBound)
 	{
-		return NewLowerbound;
+		return static_cast<float>(NewLowerbound);
 	}
-	float inRange = OriginalUpperBound - OriginalLowerBound;
-	float outRange = NewUpperBound - NewLowerbound;
-	float valueRelatedToStart = value - OriginalLowerBound;
-	float dividedValue = valueRelatedToStart / inRange;
-	float outValueRelatedToStart = dividedValue * outRange;
-	float outValue = outValueRelatedToStart + NewLowerbound;
-	return outValue;
+	int inRange = OriginalUpperBound - OriginalLowerBound;
+	int outRange = NewUpperBound - NewLowerbound;
+	int valueRelatedToStart = value - OriginalLowerBound;
+	int dividedValue = valueRelatedToStart / inRange;
+	int outValueRelatedToStart = dividedValue * outRange;
+	int outValue = outValueRelatedToStart + NewLowerbound;
+	return static_cast<float>(outValue);
 }
 
 float Atan2Degrees(float y,float x)

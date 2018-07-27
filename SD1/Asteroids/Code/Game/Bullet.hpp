@@ -18,15 +18,14 @@ public :
 	Disc2   m_disc2;
 	float   m_angle				= 0.f;
 	float   m_velocity			= 10.f;
-	float   m_innlength			= 0.f;
-	float   m_length			= 20.f;
 	long    m_timeFromstart		= 0;
 	bool    m_isAlive			= true;
 	bool    m_debugMode			= false;
+	float   m_timeToLive		= 0;
 	Vector2 velocityVect;
 
 	Bullet::Bullet();
-	Bullet::Bullet(float centreX,float centreY,float angle,float velocity,int timeToLive); 
+	Bullet::Bullet(float centreX,float centreY,float angle,float velocity,float timeToLive); 
 
 	void Render();
 	void Update(float deltaTime);

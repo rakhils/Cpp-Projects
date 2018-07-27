@@ -69,12 +69,12 @@ void App::Render()
 *///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void App::RequestToQuit()
 {
-	m_isQuitTriggered = true;
+	g_isQuitTriggered = true;
 }
 
 bool App::IsReadyToQuit()
 {
-	return m_isQuitTriggered;
+	return g_isQuitTriggered;
 }
 
 

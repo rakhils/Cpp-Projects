@@ -79,6 +79,12 @@ void Ship::ReduceHealth()
 
 void Ship::Update(float deltaTime)
 {
+	if (m_destroyStarted && !m_destroyEnded)
+	{
+		m_hasTail = false;
+		UpdateDestructionPoints(deltaTime);
+		return;
+	}
 	m_lastBulletFiredTime++;
 	Vector2 displacement = (m_forward*m_speed*deltaTime);
 	m_disc2.Translate(displacement);
@@ -92,12 +98,6 @@ void Ship::Update(float deltaTime)
 	
 	CheckAndSetPositionInsideBounds();
 	
-	if(m_destroyStarted && !m_destroyEnded)
-	{
-		m_hasTail = false;
-		UpdateDestructionPoints(deltaTime);
-		return;
-	}
 	m_posPositions.clear();
 	float radius   = m_disc2.radius;
 	Vector2 point1 = ConvertPolarToCartesian(radius,0		+ m_angle);
@@ -125,12 +125,20 @@ void Ship::Update(float deltaTime)
 
 void Ship::ApplyAngularAcceleration(int direction)
 {
+	if (m_destroyStarted)
+	{
+		return;
+	}
 	m_angularVelocity   = PLAYER_MAX_ANGULAR_SPEED;
 	m_rotationDirection = direction;
 }
 
 void Ship::ApplyLinearAcceleration(float MAX_SPEED,float deltaTime)
 {
+	if(m_destroyStarted)
+	{
+		return;
+	}
 	m_speed             += deltaTime;
 	m_speed			    =  ClampFloat(m_speed,0,MAX_SPEED);
 	m_hasTail		    =  true;
@@ -165,24 +173,24 @@ void Ship::UpdateDestructionPoints(float deltaTime)
 
 void Ship::CheckAndSetPositionInsideBounds()
 {
-	if(m_disc2.center.x - m_disc2.radius > 1000)
+	if (m_disc2.center.x - m_disc2.radius > SCREEN_WIDTH)
 	{
 		m_disc2.center.x = 0 - m_disc2.radius;
 	}
 
-	if(m_disc2.center.x  - m_disc2.radius < 0)
+	if (m_disc2.center.x + m_disc2.radius < 0)
 	{
-		m_disc2.center.x = 1000 + m_disc2.radius;
+		m_disc2.center.x = SCREEN_WIDTH + m_disc2.radius;
 	}
 
-	if(m_disc2.center.y - m_disc2.radius > 1000)
+	if(m_disc2.center.y - m_disc2.radius > SCREEN_WIDTH)
 	{
 		m_disc2.center.y = 0 - m_disc2.radius;
 	}
 
 	if(m_disc2.center.y + m_disc2.radius < 0)
 	{
-		m_disc2.center.y = 1000 + m_disc2.radius;
+		m_disc2.center.y = SCREEN_WIDTH + m_disc2.radius;
 	}
 }
 

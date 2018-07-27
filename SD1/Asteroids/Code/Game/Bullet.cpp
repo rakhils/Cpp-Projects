@@ -11,16 +11,13 @@ Bullet::Bullet()
 
 }
 
-Bullet::Bullet(float centreX, float centreY, float angle, float nvelocity, int timeToLive)
+Bullet::Bullet(float centreX, float centreY, float angle, float nvelocity, float timeToLive)
 {
-	m_disc2.center = Vector2(centreX, centreY);
-	m_disc2.radius = 0.1f;
-	this->m_angle = angle;
-	m_length = 20;
-	m_innlength = m_length*0.8f;
-	timeToLive = 1000;
-	nvelocity = 10;
-
+	m_disc2.center  = Vector2(centreX, centreY);
+	m_disc2.radius  = BULLET_RADIUS;
+	m_angle			= angle;
+	m_velocity      = nvelocity;
+	m_timeToLive    = timeToLive;
 }
 
 void Bullet::Render()
@@ -29,21 +26,20 @@ void Bullet::Render()
 	{
 		return;
 	}
-	float endX = m_disc2.center.x + (m_length)*CosDegrees(m_angle);
-	float endY = m_disc2.center.y + (m_length)*SinDegrees(m_angle);
-	g_theRenderer->DrawCircle(m_disc2.center.x,m_disc2.center.y, 1, 3);
+	float endX = m_disc2.center.x + (m_disc2.radius)*CosDegrees(m_angle);
+	float endY = m_disc2.center.y + (m_disc2.radius)*SinDegrees(m_angle);
+	g_theRenderer->DrawCircle(m_disc2.center.x,m_disc2.center.y, BULLET_RADIUS, 5);
 
 	if (m_debugMode)
 	{
 		g_theRenderer->SetColor(255, 0, 255);
-		g_theRenderer->DrawCircle(m_disc2.center.x, m_disc2.center.y, m_length);
+		g_theRenderer->DrawCircle(m_disc2.center.x, m_disc2.center.y, m_disc2.radius);
 		g_theRenderer->SetColor(0, 255, 255);
-		g_theRenderer->DrawCircle(m_disc2.center.x,m_disc2.center.y, m_innlength);
+		g_theRenderer->DrawCircle(m_disc2.center.x,m_disc2.center.y, m_disc2.radius*0.8f);
 		g_theRenderer->SetColor(255, 255, 0);
 		Vector2 unitVector = Vector2(endX - m_disc2.center.x, endY - m_disc2.center.y).GetNormalized();
 		g_theRenderer->DrawLine(m_disc2.center.x,m_disc2.center.y, m_disc2.center.x + (m_velocity*unitVector.x*60), m_disc2.center.y + (m_velocity*unitVector.y*60));
-		////glVertex2f(centreX,centreY);
-		//	glVertex2f(centreX+(velocity*unitVector->x*60.0f),centreY+(velocity*unitVector->y*60.0f));
+		
 		g_theRenderer->SetColor(255, 255, 255);
 	}
 	CheckIfBoundsOutsideWorld();
@@ -56,38 +52,37 @@ void Bullet::Update(float deltaTime)
 		return;
 	}
 	m_timeFromstart += 1;
-	if (m_timeFromstart > (4200))
+	if (m_timeFromstart > (m_timeToLive))
 	{
 		this->m_isAlive = false;
 		return;
 	}
-	float endRadiant = GetRadiantFromDegree(((float)m_angle));
-	float endX = m_disc2.center.x + (m_length)*CosDegrees(m_angle);
-	float endY = m_disc2.center.y + (m_length)*SinDegrees(m_angle);
-	Vector2 unitVector = Vector2(endX - m_disc2.center.x, endY - m_disc2.center.y).GetNormalized();
-	m_disc2.center += deltaTime * (unitVector)*m_velocity;
+	float endX			= m_disc2.center.x + (m_disc2.radius)*CosDegrees(m_angle);
+	float endY			= m_disc2.center.y + (m_disc2.radius)*SinDegrees(m_angle);
+	Vector2 unitVector  = Vector2(endX - m_disc2.center.x, endY - m_disc2.center.y).GetNormalized();
+	m_disc2.center		+= deltaTime * (unitVector)*m_velocity;
 }
 
 void Bullet::CheckIfBoundsOutsideWorld()
 {
-	if (m_disc2.center.x - m_length > 1000)
+	if (m_disc2.center.x - m_disc2.radius > SCREEN_WIDTH)
 	{
-		m_disc2.center.x = 0 - m_length;
+		m_disc2.center.x = 0 - m_disc2.radius;
 	}
 
-	if (m_disc2.center.x + m_length < 0)
+	if (m_disc2.center.x + m_disc2.radius < 0)
 	{
-		m_disc2.center.x = 1000 + m_length;
+		m_disc2.center.x = SCREEN_WIDTH + m_disc2.radius;
 	}
 
-	if (m_disc2.center.y - m_length > 1000)
+	if (m_disc2.center.y - m_disc2.radius > SCREEN_WIDTH)
 	{
-		m_disc2.center.y = 0 - m_length;
+		m_disc2.center.y = 0 - m_disc2.radius;
 	}
 
-	if (m_disc2.center.y + m_length < 0)
+	if (m_disc2.center.y + m_disc2.radius < 0)
 	{
-		m_disc2.center.y = 1000 + m_length;
+		m_disc2.center.y = SCREEN_WIDTH + m_disc2.radius;
 	}
 }
 

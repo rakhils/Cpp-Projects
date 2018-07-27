@@ -55,6 +55,11 @@ void Game::Render()
 
 void Game::Update(float deltaTime)
 {		
+	if (g_theInput->wasKeyJustPressed(InputSystem::KEYBOARD_ESCAPE))
+	{
+		g_isQuitTriggered = true;
+	}
+
 	if (g_theInput->isKeyPressed(InputSystem::KEYBOARD_RIGHT_ARROW) || g_theInput->isKeyPressed(InputSystem::KEYBOARD_D))
 	{
 		m_playerShip->ApplyAngularAcceleration(-1);
@@ -74,6 +79,8 @@ void Game::Update(float deltaTime)
 	{
 		m_playerShip->ApplyLinearAcceleration(PLAYER_MAX_SPEED,deltaTime);
 	}
+
+	
 
 	if(g_theInput->isKeyPressed(InputSystem::KEYBOARD_R))
 	{
@@ -133,10 +140,10 @@ void Game::Update(float deltaTime)
 	if(g_theInput->GetController(0).isConnected())
 	{
 		Vector2 direction = g_theInput->GetController(0).getLeftStickVector();
-		float magnitude   = direction.GetLength();
+		//float magnitude   = direction.GetLength();
 		if(direction.x != 0 && direction.y != 0)
 		{
-			m_playerShip->ApplyAngularAcceleration(Atan2Degrees(direction.y,direction.x));
+			m_playerShip->ApplyAngularAcceleration(static_cast<int>(Atan2Degrees(direction.y,direction.x)));
 			AddTail();
 		}
 		if(direction.x ==0 && direction.y==0)
@@ -295,8 +302,8 @@ void Game::UpdateEnemyShip(float deltaTime)
 
 	distanceVector = distanceVector.GetNormalized();
 	noseVector     = (noseVector.GetNormalized());
-	float angle    = Atan2Degrees(distanceVector.y, distanceVector.x);
-	float angle1   = Atan2Degrees(noseVector.y, noseVector.x);
+	//float angle    = Atan2Degrees(distanceVector.y, distanceVector.x);
+	//float angle1   = Atan2Degrees(noseVector.y, noseVector.x);
 	
 	
 	Vector2 distance     = m_playerShip->m_disc2.center - m_enemyShip->m_disc2.center;
@@ -320,7 +327,6 @@ void Game::UpdateEnemyShip(float deltaTime)
 
 void Game::UpdateAllAsteroids()
 {
-	int numOfAsteroidsAlive = 0;
 	for(int asteroidIndex=0;asteroidIndex<m_asteroids.size();asteroidIndex++)
 	{
 		Asteroid *asteroid = m_asteroids.at(asteroidIndex);
@@ -378,14 +384,14 @@ void Game::FireBullet()
 		return;
 	}
 	Vector2 shipNose = m_playerShip->GetNosePosition();
-	Bullet *bullet   = new Bullet(shipNose.x,shipNose.y,m_playerShip->m_angle,1.0f,20);
+	Bullet *bullet   = new Bullet(shipNose.x,shipNose.y,m_playerShip->m_angle,PLAYER_BULLET_SPEED,BULLET_TIME_TO_LIVE);
 	m_bullets.push_back(bullet);
 }
 
 void Game::FireEnemyShipBullet()
 {
 	Vector2 shipNose = m_enemyShip->GetNosePosition();
-	Bullet *bullet = new Bullet(shipNose.x,shipNose.y,m_enemyShip->m_angle,1.0f,20);
+	Bullet *bullet = new Bullet(shipNose.x,shipNose.y,m_enemyShip->m_angle,ENEMY_BULLET_SPEED,BULLET_TIME_TO_LIVE);
 	m_enemyBullets.push_back(bullet);
 }
 
@@ -494,7 +500,7 @@ void Game::DeleteRandomAsteroid()
 	{
 		return;
 	}
-	int randomVal = GetRandomIntInRange(0,m_asteroids.size());
+	int randomVal = GetRandomIntInRange(0,static_cast<int>(m_asteroids.size()));
 	Asteroid *asteroid = m_asteroids.at(randomVal);
 	asteroid->m_isAlive = false;
 }
