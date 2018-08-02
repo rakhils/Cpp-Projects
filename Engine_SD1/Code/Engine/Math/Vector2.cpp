@@ -33,6 +33,11 @@ Vector2::Vector2(float initialX, float initialY ): x( 99.f ), y( 99.f )
 	y = initialY;
 }
 
+Vector2::Vector2(float angle)
+{
+	this->x = CosDegrees(angle);
+	this->y = SinDegrees(angle);
+}
 
 //////////////////////////////////////////////////////////////
 /*DATE    : 2018/01/31

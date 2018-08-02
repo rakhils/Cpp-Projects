@@ -95,18 +95,18 @@ public:
 
 	// FUNCTION TO DRAW - AABB
 	void DrawTexturedAABB( const AABB2& bounds, const Texture *texture,const Vector2& texCoordsAtMins, const Vector2& texCoordsAtMaxs, const Rgba& tint ); 
-	void Renderer::DrawAABB( const AABB2& bounds, const Rgba& color );
-	void Renderer::DrawAABB( const AABB2& bounds, const Rgba& color1,const Rgba& color2 );
+	void DrawAABB( const AABB2& bounds, const Rgba& color );
+	void DrawAABB( const AABB2& bounds, const Rgba& color1,const Rgba& color2 );
 
 	// FUNCTIONS TO DRAW TEXT
-	void Renderer::DrawTextOnPoint(char value[],int start,int length, Vector2 pos,int height);
-	void Renderer::DrawTextOnPoint(char value[],int start,int length, Vector2 pos,float height,Rgba rgba);
-	void Renderer::DrawTextOnPoint(std::string str,int start,int length, Vector2 pos,float height,Rgba rgba);
-	void Renderer::DrawInt(int value, Vector2 pos,int height);
+	void DrawTextOnPoint(char value[],int start,int length, Vector2 pos,int height);
+	void DrawTextOnPoint(char value[],int start,int length, Vector2 pos,float height,Rgba rgba);
+	void DrawTextOnPoint(std::string str,int start,int length, Vector2 pos,float height,Rgba rgba);
+	void DrawInt(int value, Vector2 pos,int height);
 
 	// FUNCTIONS TO CREATE TEXT INSIDE A BOX
-	void Renderer::DrawText2D( const Vector2& drawMins,const std::string& asciiText,float cellHeight,Rgba tint,float aspectScale = 1.f, const BitmapFont* font = nullptr );
-	void Renderer::DrawTextInBox2D(AABB2 aabb2,std::string text,float aspectRation,float height,Vector2 alignment,TextDrawMode drawMode);
+	void DrawText2D( const Vector2& drawMins,const std::string& asciiText,float cellHeight,Rgba tint,float aspectScale = 1.f, const BitmapFont* font = nullptr );
+	void DrawTextInBox2D(AABB2 aabb2,std::string text,float aspectRation,float height,Vector2 alignment,TextDrawMode drawMode);
 
 	// DRAWING USING DRAWARRAYS
 	void Renderer::DrawMeshImmediate( const Vertex_3DPCU* verts, int numVerts, DrawPrimitiveType drawPrimitive );

@@ -218,30 +218,154 @@ bool IsPointInsideAABB2(AABB2 aabb2, Vector2 position)
 	return false;
 }
 
-bool DoDiscAndAABBOverlap(const AABB2& aabb2, const Disc2& disk,Vector2 positionVector)
+bool DoDiscAndAABBOverlap(Directions &direction, const AABB2& aabb2, const Disc2& disk,Vector2 positionVector)
 {
+	float radius			= disk.radius;
 	Vector2 distanceVector = Vector2(disk.center.x - aabb2.GetCenter().x, disk.center.y - aabb2.GetCenter().y);
+	Vector2 diskPosition = disk.center;
+	Vector2 aabb2Position = aabb2.GetCenter();
+
+	if (disk.center.y > aabb2.mins.y && disk.center.y < aabb2.maxs.y)
+	{
+		//CHECK WEST
+		if (disk.center.x < aabb2.mins.x)
+		{
+			if (disk.center.x + radius > aabb2.mins.x)
+			{
+				direction = WEST;
+				return true;
+			}
+		}
+		//CHECK EAST
+		if (disk.center.x > aabb2.maxs.x)
+		{
+			if (disk.center.x - radius < aabb2.maxs.x)
+			{
+				direction = EAST;
+				return true;
+			}
+
+		}
+	}
+
+	if (disk.center.x > aabb2.mins.x && disk.center.x < aabb2.maxs.x)
+	{
+		//CHECK NORTH
+		if (disk.center.y > aabb2.maxs.y)
+		{
+			if (disk.center.y - radius < aabb2.maxs.y)
+			{
+				direction = NORTH;
+				return true;
+			}
+		}
+		//CHECK SOUTH
+		if (disk.center.y < aabb2.mins.y)
+		{
+			if (disk.center.y + radius > aabb2.mins.y)
+			{
+				direction = SOUTH;
+				return true;
+			}
+		}
+	}
+
+	if (disk.center.x < aabb2.mins.x)
+	{
+		//CHECK NORTH_WEST
+		if (disk.center.y > aabb2.maxs.y)
+		{
+			Vector2 northWestCorner(aabb2.mins.x, aabb2.maxs.y);
+			float distanceToCorner = (northWestCorner - disk.center).GetLength();
+			if (distanceToCorner <= disk.radius)
+			{
+				direction = NORTH_WEST;
+				return true;
+			}
+		}
+		//CHECK SOUTH_WEST
+		if (disk.center.y < aabb2.mins.y)
+		{
+			Vector2 southWestCorner(aabb2.mins.x, aabb2.mins.y);
+			float distanceToCorner = (southWestCorner - disk.center).GetLength();
+			if (distanceToCorner <= disk.radius)
+			{
+				direction = SOUTH_WEST;
+				return true;
+			}
+		}
+		// WEST
+	}
+	//CHECK EAST
+	if (disk.center.x > aabb2.maxs.x)
+	{
+		//CHECK NORTH_EAST
+		if (disk.center.y > aabb2.maxs.y)
+		{
+			Vector2 southWestCorner(aabb2.maxs.x, aabb2.maxs.y);
+			float distanceToCorner = (southWestCorner - disk.center).GetLength();
+			if (distanceToCorner <= disk.radius)
+			{
+				direction = NORTH_EAST;
+				return true;
+			}
+		}
+		//CHECK SOUTH_EAST
+		if (disk.center.y < aabb2.mins.y)
+		{
+			Vector2 southEastCorner(aabb2.maxs.x, aabb2.mins.y);
+			float distanceToCorner = (southEastCorner - disk.center).GetLength();
+			if (distanceToCorner <= disk.radius)
+			{
+				direction = SOUTH_EAST;
+				return true;
+			}
+		}
+	}
+	if (disk.center.x > aabb2.mins.x && disk.center.x < aabb2.maxs.x)
+	{
+		// ELSE CENTRE
+		if (disk.center.y > aabb2.mins.y && disk.center.y < aabb2.maxs.y)
+		{
+			direction = CENTRE;
+			return true;
+		}
+	}
+
+
+
+	if(true)
+	{
+		return false;
+	}
+
+
+	//Vector2 distanceVector = Vector2(disk.center.x - aabb2.GetCenter().x, disk.center.y - aabb2.GetCenter().y);
 	
 	if(positionVector.y == 1 && positionVector.x==0)
 	if((disk.center.y + disk.radius >= aabb2.mins.y))// && disk.center.x > aabb2.mins.x && disk.center.x < aabb2.maxs.x)
 	{
+		direction = SOUTH;
 		return true;
 	}
 
 	if(positionVector.y == 0 && positionVector.x==1)
 	if((disk.center.x + disk.radius >= aabb2.mins.x))// && disk.center.y > aabb2.mins.y && disk.center.y < aabb2.maxs.y)
 	{
+		direction = WEST;
 		return true;
 	}
 	
 	if(positionVector.y == 0 && positionVector.x==-1)
 	if(disk.center.x - disk.radius < aabb2.maxs.x)
 	{
+		direction = EAST;
 		return true;
 	}
 	if(positionVector.y == -1 && positionVector.x==0)
 	if(disk.center.y - disk.radius < aabb2.maxs.y)
 	{
+		direction = NORTH;
 		return true;
 	}
 
@@ -252,18 +376,22 @@ bool DoDiscAndAABBOverlap(const AABB2& aabb2, const Disc2& disk,Vector2 position
 
 	if(Vector2(disk.center - NE).GetLength() < disk.radius)
 	{
+		direction = NORTH_EAST;
 		return true;
 	}
 	if(Vector2(disk.center - NW).GetLength() < disk.radius)
 	{
+		direction = NORTH_WEST;
 		return true;
 	}
 	if(Vector2(disk.center - SE).GetLength() < disk.radius)
 	{
+		direction = SOUTH_EAST;
 		return true;
 	}
 	if(Vector2(disk.center - SW).GetLength() < disk.radius)
 	{
+		direction = SOUTH_WEST;
 		return true;
 	}
 
@@ -335,6 +463,62 @@ float GetAngleBetweenInDegrees(Vector2 vec1, Vector2 vec2)
 	return ConvertRadiansToDegrees(diff);
 }
 
+float GetRotationDirectionBetween2Angles(float angleStart, float angleDest)
+{
+	angleStart = DoAngleCorrection(angleStart);
+	angleDest  = DoAngleCorrection(angleDest);
+	int quadrantDifference = GetAngleQuadrant(angleDest) - GetAngleQuadrant(angleStart);
+
+	if (quadrantDifference == 0)
+	{
+		if (angleDest > angleStart)
+		{
+			return 1;
+		}
+		return -1;
+	}
+
+	if (quadrantDifference == 1)
+	{
+		return 1;
+	}
+	if(quadrantDifference == -1)
+	{
+		return -1;
+	}
+
+	if (GetModulus(quadrantDifference) == 2)
+	{
+		float angleMod = GetModulus(angleDest - angleStart);
+		if(angleMod > 180)
+		{
+			if(GetAngleQuadrant(angleDest) < GetAngleQuadrant(angleStart))
+			{
+				return 1;
+			}
+			return -1;
+		}
+		if(angleMod > 0)
+		{
+			if(GetAngleQuadrant(angleDest) < GetAngleQuadrant(angleStart))
+			{
+				return -1;
+			}
+			return 1;
+		}
+	}
+
+	if(GetModulus(quadrantDifference) == 3)
+	{
+		if (GetAngleQuadrant(angleDest) > GetAngleQuadrant(angleStart))
+		{
+			return -1;
+		}
+		return 1;
+	}
+	return 1;
+}
+
 float GetLargestOf4(float value1, float value2, float value3, float value4)
 {
 	float greatest = value1;
@@ -398,6 +582,86 @@ float GetLargestOf8(float value1, float value2, float value3, float value4, floa
 
 Vector2 GetAABBDiscOverlapDistance(const AABB2& aabb2, const Disc2& disk,Vector2 tileVector,Vector2 positionVector)
 {
+	Vector2 position				= positionVector;
+	float   radius					= disk.radius;
+	Vector2 circleColliderPosition  = disk.center;
+	Vector2	overlapDistance;
+	if (positionVector == Vector2::NORTH)
+	{
+		float distanceToPush = ((circleColliderPosition.y + radius) - aabb2.mins.y);
+		overlapDistance		 = Vector2(0.f, -distanceToPush);
+	}
+	if (positionVector == Vector2::SOUTH)
+	{
+		float distanceToPush = (aabb2.maxs.y - (circleColliderPosition.y - radius));
+		overlapDistance		 = Vector2(0.f, distanceToPush);
+	}
+	if (positionVector == Vector2::WEST)
+	{
+		float distanceToPush = (aabb2.maxs.x - (circleColliderPosition.x - radius));
+		overlapDistance		 = Vector2(distanceToPush, 0.f);
+	}
+	if (positionVector == Vector2::EAST)
+	{
+		float distanceToPush = ((circleColliderPosition.x + radius) - aabb2.mins.x);
+		overlapDistance		 = Vector2(-distanceToPush,0.f);
+	}
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	if (positionVector == Vector2::SOUTHEAST)
+	{
+		Vector2 northWestCornerPosition(aabb2.mins.x, aabb2.maxs.y);
+		Vector2 distance		 = circleColliderPosition - northWestCornerPosition;
+		Vector2 pushDirection    = distance.GetNormalized();
+		Vector2 requiredDistance = pushDirection * radius;
+		float   differenceX		 = requiredDistance.x - distance.x;
+		float   differenceY		 = requiredDistance.y - distance.y;
+		overlapDistance			 = Vector2(differenceX, differenceY);
+	}
+	if (positionVector == Vector2::SOUTHWEST)
+	{
+		Vector2 northEastCornerPosition(aabb2.maxs.x, aabb2.maxs.y);
+		Vector2 distance		 = circleColliderPosition - northEastCornerPosition;
+		Vector2 pushDirection	 = distance.GetNormalized();
+		Vector2 requiredDistance = pushDirection * radius;
+		float   differenceX		 = requiredDistance.x - distance.x;
+		float   differenceY		 = requiredDistance.y - distance.y;
+
+		overlapDistance			 = Vector2(differenceX, differenceY);
+	}
+	if (positionVector == Vector2::NORTHEAST)
+	{
+		Vector2 southWestCornerPosition(aabb2.mins.x, aabb2.mins.y);
+		Vector2 distance         = circleColliderPosition - southWestCornerPosition;
+		Vector2 pushDirection    = distance.GetNormalized();
+		Vector2 requiredDistance = pushDirection * radius;
+		float   differenceX		 = requiredDistance.x - distance.x;
+		float   differenceY		 = requiredDistance.y - distance.y;
+
+		overlapDistance			 = Vector2(differenceX, differenceY);
+
+	}
+	if (positionVector == Vector2::NORTHWEST)
+	{
+		Vector2 southEastCornerPosition(aabb2.maxs.x, aabb2.mins.y);
+		Vector2 distance			= circleColliderPosition - southEastCornerPosition;
+		Vector2 pushDirection		= distance.GetNormalized();
+		Vector2 requiredDistance	= pushDirection * radius;
+		float   differenceX			= requiredDistance.x - distance.x;
+		float   differenceY			= requiredDistance.y - distance.y;
+
+		overlapDistance				= Vector2(differenceX, differenceY);
+	}
+	if(true)
+	{
+		return overlapDistance;
+	}
+
+
+
+
+
+
+
 	Vector2 distanceVector(0,0);
 
 	if(positionVector.x == -1 && positionVector.y == -1)
@@ -430,14 +694,12 @@ Vector2 GetAABBDiscOverlapDistance(const AABB2& aabb2, const Disc2& disk,Vector2
 		distanceVector.y = aabb2.GetCenter().y - disk.center.y;
 	}
 
-
-	Vector2 unitDistanceVector = distanceVector.GetNormalized();
-	Vector2 radiusVectorTowardsAABB2 = Vector2(GetModulus(unitDistanceVector.x)*positionVector.x,GetModulus(unitDistanceVector.y)*positionVector.y);
-	radiusVectorTowardsAABB2 = radiusVectorTowardsAABB2*disk.radius;
-	radiusVectorTowardsAABB2+=disk.center;
-	Vector2 tempVector = tileVector + positionVector/2;
-	//tempVector = tempVector - unitDistanceVector/2;
-	Vector2 overLapDistanceVector = tempVector - radiusVectorTowardsAABB2;
+	Vector2 unitDistanceVector		 =  distanceVector.GetNormalized();
+	Vector2 radiusVectorTowardsAABB2 =  Vector2(GetModulus(unitDistanceVector.x)*positionVector.x,GetModulus(unitDistanceVector.y)*positionVector.y);
+	radiusVectorTowardsAABB2		 =  radiusVectorTowardsAABB2*disk.radius;
+	radiusVectorTowardsAABB2		+=  disk.center;
+	Vector2 tempVector				 =  tileVector + positionVector/2;
+	Vector2 overLapDistanceVector	 = tempVector  - radiusVectorTowardsAABB2;
 	
 	return overLapDistanceVector;		
 }
@@ -492,6 +754,28 @@ float ACosDegrees(float value)
 	return ConvertRadiansToDegrees(acosf(value));
 }
 
+QUADRANT GetAngleQuadrant(float value)
+{
+	value = DoAngleCorrection(value);
+	if(value < 90 && value >= 0)
+	{
+		return FIRST;
+	}
+	if(value < 180)
+	{
+		return SECOND;
+	}
+	if(value < 270)
+	{
+		return THIRD;
+	}
+	if(value < 360)
+	{
+		return FOURTH;
+	}
+	return NONE;
+}
+
 float ClampZeroOrToOne(float value)
 {
 	if(value > 0.5)
@@ -512,42 +796,6 @@ bool isBitSet(unsigned char bitflags,unsigned char bittocheck)
 	return ((bitflags & bittocheck) == bittocheck);
 }
 
-//float getNumberInRange
-float turnTowards(float start, float end, float maxTurnDegrees)
-{
-	float angularDisplacement = GetAngularDisplacement(start,end);
-	if(angularDisplacement < 0)
-	{
-		if(start < 0)
-		if(180 + start < maxTurnDegrees)
-		{
-			start = 180;
-			maxTurnDegrees = maxTurnDegrees - (180 + start);
-		}
-
-		if(start - maxTurnDegrees < end)
-		{
-			return -maxTurnDegrees;
-		}
-		return -(start - end);
-	}
-	if(angularDisplacement > 0)
-	{
-		if(start > 0)
-		if(180 - start < maxTurnDegrees)
-		{
-			start = -180;
-			maxTurnDegrees = maxTurnDegrees - (180 - start);
-		}
-		if(start + maxTurnDegrees < end)
-		{
-			return maxTurnDegrees;
-		}
-		return (end - start);
-	}
-	return 0;
-}
-
 bool IsPointInsideDisc2(Vector2 pointValue, Disc2& disk)
 {
 	Vector2 distance = pointValue - disk.center;
@@ -558,14 +806,23 @@ bool IsPointInsideDisc2(Vector2 pointValue, Disc2& disk)
 	return false;
 }
 
-float turnTowards1(float *start, float end, float maxDelta)
+//////////////////////////////////////////////////////////////
+/*DATE    : 2017/12/19
+*@purpose : INCREASES/DECREASES THE ANGLE IN THE DIRECTION OF GOAL DEGREE
+*
+*@param   : Start angle, Goal angle , Max angle change per frame
+*
+*@return  : Returns the delta angle of rotation
+*/
+//////////////////////////////////////////////////////////////
+float TurnTowards(float *start, float end, float maxDelta)
 {
 	if(end < 0)
 	{
 		end = end*-1;
 	}
 	float returnValue = 0;
-	float startCopy = *start;
+	float startCopy   = *start;
 	if(maxDelta < 0)
 	{
 		if(*start > end)
@@ -596,94 +853,12 @@ float turnTowards1(float *start, float end, float maxDelta)
 	return returnValue;
 }
 
-float TurnTowards2_oroginal(float currentDegrees, float goalDegrees, float maxTurnDegrees)
-{
-	float diff = GetAngularDisplacement(currentDegrees,goalDegrees);
-	float originalCurrentDegrees = currentDegrees;
-	float originalGoalDegrees = goalDegrees;
-	if(currentDegrees > 0)
-	{
-		goalDegrees -= currentDegrees;
-	}
-	else
-	{
-		goalDegrees += currentDegrees;
-	}
 
-	goalDegrees = DoAngleCorrection(goalDegrees);
-	currentDegrees = 0;
-
-	if(diff > 0)
-	{
-		if(currentDegrees + maxTurnDegrees < goalDegrees)
-		{
-			return originalCurrentDegrees + maxTurnDegrees;
-		}
-		return originalGoalDegrees;
-	}
-
-	if(currentDegrees - maxTurnDegrees > goalDegrees)
-	{
-		return originalCurrentDegrees - maxTurnDegrees;
-	}
-	return originalGoalDegrees;
-}
-
-//////////////////////////////////////////////////////////////
-/*DATE    : 2017/12/19
-*@purpose : INCREASES/DECREASES THE ANGLE IN THE DIRECTION OF GOAL DEGREE
-*
-*@param   : Start angle, Goal angle , Max angle change per frame
-*
-*@return  : Returns the delta angle of rotation
-*/
-//////////////////////////////////////////////////////////////
-float TurnTowards(float currentDegrees, float goalDegrees, float maxTurnDegrees)
-{
-	DoAngleCorrection(currentDegrees);
-	DoAngleCorrection(goalDegrees);
-	float returnAngle = 0.0f;
-	if (fabs(goalDegrees - currentDegrees) < 180)
-	{
-		returnAngle = goalDegrees - currentDegrees;
-		return GetMinOf2(returnAngle,maxTurnDegrees);
-	}
-	if (goalDegrees > currentDegrees)
-	{
-		returnAngle = goalDegrees - currentDegrees - 180 * 2.0f;
-		return GetMinOf2(returnAngle,maxTurnDegrees);
-	}
-	returnAngle =  goalDegrees - currentDegrees + 180 * 2.0f;
-	return GetMinOf2(returnAngle,maxTurnDegrees);
-}
-
-float TurnTowardsInNegativeDirection(float angle, float finalAngle, float deltaAngle)
-{
-	if(angle - deltaAngle > finalAngle)
-	{
-		/*angle -= deltaAngle;
-		return angle;*/
-		return deltaAngle;
-	}
-	angle = finalAngle;
-	return angle;
-}
-
-float TurnTowardsInPositiveDirection(float m_angle, float m_finalAngle, float deltaAngle)
-{
-	if(m_angle + deltaAngle < m_finalAngle)
-	{
-		/*m_angle += deltaAngle;
-		return m_angle;*/
-		return deltaAngle;
-	}
-	return m_finalAngle - m_angle;
-	/*m_angle = m_finalAngle;
-	return m_angle;*/
-}
 
 float GetAngularDisplacement(float start,float end)
 {
+	DoAngleCorrection(start);
+	DoAngleCorrection(end);
 	float angularDisp = end - start;
 	while(angularDisp > 180)
 	{

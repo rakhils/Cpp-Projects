@@ -10,21 +10,41 @@
 #include "Engine/Math/IntVector2.hpp"
 #include "Engine/Math/Vector3.hpp"
 #include "Engine/Math/Vector4.hpp"
- 
+enum QUADRANT
+{
+	FIRST,
+	SECOND,
+	THIRD,
+	FOURTH,
+	NONE
+};
+enum Directions
+{
+	EAST,
+	NORTH,
+	WEST,
+	SOUTH,
+	NORTH_EAST,
+	NORTH_WEST,
+	SOUTH_WEST,
+	SOUTH_EAST,
+	CENTRE
+};
 //RANDOMG FLOAT , RANDOM INT
-float GetRandomFloatInRange(float minInclusive,float maxExclusive);
-float GetRandomFloatZeroToOne();
-int   GetRandomIntInRange(int minInclusive,int maxExclusive);
-int   GetRandomIntLessThan(int maxExclusive);
+float	 GetRandomFloatInRange(float minInclusive,float maxExclusive);
+float	 GetRandomFloatZeroToOne();
+int		 GetRandomIntInRange(int minInclusive,int maxExclusive);
+int		 GetRandomIntLessThan(int maxExclusive);
 
 // ANGLE , RADIANT RELATED FUNCTIONS
-float GetRadiantFromDegree(float angle);
-float ConvertRadiansToDegrees( float radians );
-float ConvertDegreesToRadians( float degrees );
-float CosDegrees( float degrees );
-float SinDegrees( float degrees );
-float Atan2Degrees(float y,float x);
-float ACosDegrees(float value);
+float	 GetRadiantFromDegree(float angle);
+float	 ConvertRadiansToDegrees( float radians );
+float	 ConvertDegreesToRadians( float degrees );
+float	 CosDegrees( float degrees );
+float	 SinDegrees( float degrees );
+float	 Atan2Degrees(float y,float x);
+float	 ACosDegrees(float value);
+QUADRANT GetAngleQuadrant(float value);
 
 
 float GetMaxOf2 (float value1, float value2);
@@ -41,6 +61,7 @@ bool  IsAngleWithinRangeOf(float angle, float baseAngle, float range, float dire
 bool  IsVectorAlmostEqual(Vector2 value1, Vector2 value2, float diff);
 float GetWorldZAngle(Vector2 vec1);
 float GetAngleBetweenInDegrees(Vector2 vec1,Vector2 vec2);
+float GetRotationDirectionBetween2Angles(float angle1, float angle2);
 
 float GetLargestOf4(float value1, float value2, float value3, float value4);
 float GetLargestOf8(float value1, float value2, float value3, float value4,float value5, float value6, float value7, float value8);
@@ -51,16 +72,12 @@ bool    DoDiscsOverlap(const Disc2& a, const Disc2& b);
 bool    DoDiscsOverlap(const Vector2& aCenter, float aRadius, const Vector2& bCenter, float bRadius);
 bool    IsPointInsideAABB2(AABB2 aabb2, Vector2 position);
 bool    IsPointInsideDisc2(Vector2 pointValue,Disc2& disk);
-bool    DoDiscAndAABBOverlap(const AABB2 &aabb2, const Disc2& disk, Vector2 postionVector);
+bool    DoDiscAndAABBOverlap(Directions &directions,const AABB2 &aabb2, const Disc2& disk, Vector2 postionVector);
 Vector2 GetAABBDiscOverlapDistance(const AABB2& aabb2, const Disc2& disk,Vector2 directionVector,Vector2 positionVector);
 
-float turnTowards(float start, float end, float maxTurnDegrees);
-float turnTowards1(float *start,float end,float maxDelta);
-float TurnTowards2_oroginal( float currentDegrees, float goalDegrees, float maxTurnDegrees );
 
-float TurnTowards( float currentDegrees, float goalDegrees, float maxTurnDegrees );
-float TurnTowardsInNegativeDirection(float m_angle,float m_finalAngle,float deltaAngle);
-float TurnTowardsInPositiveDirection(float m_angle,float m_finalAngle,float deltaAngle);
+float TurnTowards(float *start,float end,float maxDelta);
+
 float GetAngularDisplacement(float start,float end);
 
 // DOT PRODUCT

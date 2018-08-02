@@ -12,6 +12,7 @@ public:
 	Vector2 () { x = 0.f; y = 0.f; }											// default constructor: do nothing (for speed)
 	//Vector2(IntVector2 intVector);
 	Vector2 ( const Vector2& copyFrom );					// copy constructor (from another vec2)
+	Vector2	(float angle);
 	explicit Vector2( float initialX, float initialY );		// explicit constructor (from x, y)
 
 																		// Operators

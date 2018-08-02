@@ -504,13 +504,15 @@ void Renderer::DrawTextOnPoint(char value[],int start,int length, Vector2 positi
 		position.x		+= height*2;
 		int spriteIndex = (int)ch;
 
+		Texture *texture = CreateOrGetTexture("Data\\Images\\font2.png");
+
 		BitmapFont *bitmapFont = CreateOrGetBitmapFont("font2");
 		AABB2 aabb2 = bitmapFont->m_spriteSheet->GetTexCoordsForSpriteIndex(spriteIndex);
 		Vector2 minPosition = Vector2(aabb2.mins.x, aabb2.mins.y);
 		Vector2 maxPosition = Vector2(aabb2.maxs.x, aabb2.maxs.y);
 		AABB2 textPosition(position,static_cast<float>(height),static_cast<float>(height));
 		
-		DrawTexturedAABB(textPosition,bitmapFont->m_spriteSheet->getTexture(),minPosition,maxPosition,rgba);
+		DrawTexturedAABB(textPosition,texture,minPosition,maxPosition,rgba);
 	}
 }
 
