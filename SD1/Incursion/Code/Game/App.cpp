@@ -43,8 +43,8 @@ void App::RunFrame()
 
 void App::Update()
 {
-	float deltaTime = static_cast<float>(GetCurrentTimeSeconds() - prevTime);
-	prevTime		= GetCurrentTimeSeconds();
+	float deltaTime = static_cast<float>(GetCurrentTimeSeconds() - m_prevTime);
+	m_prevTime		= GetCurrentTimeSeconds();
 	deltaTime		= ClampFloat(deltaTime, 0, MAX_DELTA);
 	g_theGame->Update(deltaTime);
 	g_isQuitTriggered = g_theGame->m_isQuitTriggered;
@@ -58,5 +58,10 @@ void App::Render()
 bool App::IsReadyToQuit()
 {
 	return g_isQuitTriggered;//g_theInput->isKeyPressed(VK_ESCAPE);
+}
+
+void App::RequestToQuit()
+{
+	g_isQuitTriggered = true;
 }
 

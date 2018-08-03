@@ -15,6 +15,8 @@ AABB2 SpriteSheet::GetTexCoordsForSpriteCoords(const IntVector2& spriteCoords) c
 	float TopRigthX   = ((spriteCoords.x + 1) * 1.0f/m_spriteLayout.x);
 	
 	AABB2 aabb2(BottomLeftX,TopRightY,TopRigthX,BottomLeftY);
+	//AABB2 aabb2(BottomLeftX, BottomLeftY, TopRigthX, TopRightY);
+
 	return aabb2;
 }
 

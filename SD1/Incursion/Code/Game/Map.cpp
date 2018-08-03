@@ -202,7 +202,7 @@ Vector2 Map::GetRandomFreePosition()
 		int randy = GetRandomIntInRange(0,m_NUM_OF_ROWS-1);
 		int value = randy*m_NUM_OF_COLUMNS+randx;
 
-		if((m_tiles->at(value).m_isSolid) || (randx<5 || randy<5))
+		if((m_tiles->at(value).m_isSolid) || (randx<8 || randy<8))
 		{
 			i--;
 			continue;

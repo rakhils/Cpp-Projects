@@ -6,8 +6,8 @@ class App
 public:
 	// VARIABLES
 	Game *g_theGame = nullptr;
-	double currTime = GetCurrentTimeSeconds();
-	double prevTime = currTime;
+	double m_currTime = GetCurrentTimeSeconds();
+	double m_prevTime = m_currTime;
 
 	// FUNCTIONS
 	App();
@@ -16,4 +16,5 @@ public:
 	void Update();
 	void Render();
 	bool IsReadyToQuit();
+	void RequestToQuit();
 };
