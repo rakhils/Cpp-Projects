@@ -1,9 +1,3 @@
-Known Issue
-
-There is an issue regarding the performance. The game may experience a delay on the path of execution but it corrects itself in some time.
-Slow motion won't work as delta time calculation is not implemented yet.
-
-
 How to USE
  
 The Game supports following keys
